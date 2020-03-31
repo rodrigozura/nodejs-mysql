@@ -51,6 +51,7 @@ app.use(passport.session());
 //----------------------------Global Variables - Variables globales - por ejemplo la autentificacion
 app.use(( req, res, next ) => {
     app.locals.success = req.flash('success');
+    app.locals.message = req.flash('message');
     next();
 
 });
