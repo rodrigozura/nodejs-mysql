@@ -6,6 +6,11 @@ const exphbs = require('express-handlebars');
 const Handlebars = require('handlebars');
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access');
 const path = require('path');
+const flash = require('connect-flash');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session');
+
+const { database } = require('./keys');
 
 //-------------------------------Inicializations
 const app = express();
@@ -28,13 +33,21 @@ app.set('view engine', '.hbs');
 
 
 //----------------------------Middlewares - son funciones que se ejecutan cada vez que un usuario o cliente envia una peticion
+app.use(session({
+    secret: 'faztmysqlnodesession',
+    resave: false,
+    saveUninitialized: false,
+    store: new MySQLStore(database)
+})); 
+app.use(flash());
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+
 //----------------------------Global Variables - Variables globales - por ejemplo la autentificacion
 app.use(( req, res, next ) => {
-
+    app.locals.success = req.flash('success');
     next();
 
 });
